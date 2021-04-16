@@ -21,22 +21,16 @@ public class BallDirector : MonoBehaviour
 
     private BallController[] balls = new BallController[100];
 
-    private int ballObjectIndex = 0;
+    [SerializeField] private int ballObjectIndex = 0;
     private int ballNum;
 
 
     private void Start()
     {
         GetBalls();
+        StartCoroutine(CallBall());
     }
 
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.Alpha1))
-        {
-            CallBall();
-        }
-    }
 
     private void GetBalls()
     {
@@ -44,13 +38,15 @@ public class BallDirector : MonoBehaviour
         {
             balls[i] = GameObject.Find("Balls").gameObject.transform.GetChild(i).gameObject.GetComponent<BallController>();
             balls[i].gameObject.transform.position = new Vector3(0, 0, 0);
-            balls[i].gameObject.SetActive(false);
+            //balls[i].gameObject.SetActive(false);
         }
     }
 
-    private void CallBall()
+    public IEnumerator CallBall()
     {
-        ballNum = Random.Range(1, 7);
+        yield return new WaitForSeconds(0.4f);
+
+        ballNum = Random.Range(1, 5);
         balls[ballObjectIndex].GetComponent<BallController>().SetBall(ballInfo[ballNum]);
 
         do
@@ -58,7 +54,9 @@ public class BallDirector : MonoBehaviour
             ballObjectIndex++;
             if (ballObjectIndex > 99) ballObjectIndex = 0;
         } while (balls[ballObjectIndex].isOn);
-        Debug.Log(ballObjectIndex);
+        //Debug.Log(ballObjectIndex);
+
+        yield return null;
     }
 }
 
