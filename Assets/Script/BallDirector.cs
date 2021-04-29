@@ -38,12 +38,16 @@ public class BallDirector : MonoBehaviour
         {
             balls[i] = GameObject.Find("Balls").gameObject.transform.GetChild(i).gameObject.GetComponent<BallController>();
             balls[i].gameObject.transform.position = new Vector3(0, 0, 0);
-            //balls[i].gameObject.SetActive(false);
+            balls[i].gameObject.SetActive(false);
         }
     }
 
     public IEnumerator CallBall()
     {
+        if(WarningZone.instance.isGameOver == true)
+        {
+            yield return null;
+        }
         yield return new WaitForSeconds(0.4f);
 
         ballNum = Random.Range(1, 5);

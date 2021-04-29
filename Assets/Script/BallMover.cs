@@ -34,7 +34,8 @@ public class BallMover : MonoBehaviour, IDragHandler, IEndDragHandler{
 
     public void OnDrag(PointerEventData eventData)
     {
-        movePos = eventData.position.x * 6f / 1080 - 3f;
+        //Debug.Log(eventData.position.x);
+        movePos = eventData.position.x * 5f / 1080f - 2.5f;
         ballMove(movePos);
     }
 
