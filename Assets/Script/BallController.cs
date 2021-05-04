@@ -7,10 +7,11 @@ public class BallController : MonoBehaviour
 {
     public int ballNum;
     public bool isOn=false;
-    public bool isShooted = false;
 
+    public bool isShooted = false;
     [SerializeField] private float speed;
     [SerializeField] private SpriteRenderer spriteRenderer;
+    [SerializeField] private AudioSource ballSound;
     private BallController collisionBallController;
     private Rigidbody2D rigidBody;
     private bool isGettingBig = false;
@@ -32,7 +33,7 @@ public class BallController : MonoBehaviour
         ballNum = info.num;
         gameObject.transform.position = new Vector3(0f, 4f, 0);
         gameObject.transform.DOScale(new Vector3(info.radius, info.radius, 1f), 0.3f);
-        //spriteRenderer.sprite = info.image;
+        spriteRenderer.sprite = info.image;
 
         gameObject.SetActive(true);
         BallMover.instance.ballMove += AimBall;
@@ -56,34 +57,10 @@ public class BallController : MonoBehaviour
         StartCoroutine(BallDirector.instance.CallBall());
     }
 
-
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        isShooted = true;
-        /*
-        if (isGettingBig == false)
-        {
-            collisionBallController = collision.gameObject.GetComponent<BallController>();
-            if (collision.gameObject.layer == 8)
-            {
-                if (ballNum == collisionBallController.ballNum)
-                {
-                    if (gameObject.transform.position.y >= collision.transform.position.y)
-                    {
-                        collisionBallController.isOn = false;
-
-                        rigidBody.AddForce(3 * (collision.transform.position - gameObject.transform.position));
-                        collision.gameObject.SetActive(false);
-                        //collision.transform.DOMove(collision.gameObject.transform.position, 0.4f);
-
-                        ScoreManager.instance.GetScore(ballNum);
-                        ballNum++;
-                        StartCoroutine("BallScaler");
-                    }
-                }
-            }
-        }
-        */
+        if(collision.gameObject.layer != 9)
+            isShooted = true;
     }
 
     private void OnCollisionStay2D(Collision2D collision)
@@ -103,17 +80,24 @@ public class BallController : MonoBehaviour
                         collision.gameObject.SetActive(false);
                         //collision.transform.DOMove(collision.gameObject.transform.position, 0.4f);
 
-                        ScoreManager.instance.GetScore(ballNum);
+                        GameDirector.instance.GetScore(ballNum);
                         ballNum++;
                         StartCoroutine("BallScaler");
                     }
                 }
             }
         }
-
-        if (isShooted = true && collision.gameObject.layer == 11)
+    }
+    private void OnTriggerStay2D(Collider2D collision)
+    {
+        if (isShooted && collision.gameObject.layer == 10)
         {
-            WarningZone.instance.GameOver();
+            WarningZone.instance.GameOverLineSetActive(true);
+        }
+
+        if (isShooted && collision.gameObject.layer == 11)
+        {
+            GameDirector.instance.GameOver();
         }
 
     }
@@ -124,8 +108,10 @@ public class BallController : MonoBehaviour
         yield return new WaitForSeconds(0.4f);
 
         gameObject.transform.DOScale(
-            new Vector3(0.1f + 0.2f* ballNum, 0.1f + 0.2f*ballNum, 1f), 0.3f);
+            new Vector3(0.1f* ballNum, 0.1f*ballNum, 1f), 0.3f);
+        ballSound.Play();
 
+        spriteRenderer.sprite = BallDirector.instance.ballInfo[ballNum-1].image;
         yield return new WaitForSeconds(0.3f);
         isGettingBig = false;
         //Debug.Log(isGettingBig);

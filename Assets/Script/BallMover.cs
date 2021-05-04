@@ -24,6 +24,8 @@ public class BallMover : MonoBehaviour, IDragHandler, IEndDragHandler{
     public delegate void BallShoot();
     public BallShoot ballShoot;
 
+    [SerializeField] private AudioSource dragStartSound;
+    [SerializeField] private AudioSource dragEndSound;
     private float movePos;
 
     private void Start()
@@ -32,6 +34,12 @@ public class BallMover : MonoBehaviour, IDragHandler, IEndDragHandler{
         ballShoot = null;
     }
 
+    public void OnBeginDrag(PointerEventData eventData)
+    {
+        Debug.Log("DragStart");
+        dragStartSound.Play();
+    }
+    
     public void OnDrag(PointerEventData eventData)
     {
         //Debug.Log(eventData.position.x);
@@ -41,6 +49,7 @@ public class BallMover : MonoBehaviour, IDragHandler, IEndDragHandler{
 
     public void OnEndDrag(PointerEventData eventData)
     {
+        dragEndSound.Play();
         ballShoot();
     }
 

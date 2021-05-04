@@ -22,15 +22,16 @@ public class BallDirector : MonoBehaviour
     private BallController[] balls = new BallController[100];
 
     [SerializeField] private int ballObjectIndex = 0;
+    [SerializeField] private GameObject dragZone;
     private int ballNum;
 
 
     private void Start()
     {
         GetBalls();
+        dragZone.SetActive(true);
         StartCoroutine(CallBall());
     }
-
 
     private void GetBalls()
     {
@@ -44,13 +45,14 @@ public class BallDirector : MonoBehaviour
 
     public IEnumerator CallBall()
     {
-        if(WarningZone.instance.isGameOver == true)
+        if(GameDirector.instance.isGameOver == true)
         {
-            yield return null;
+            dragZone.SetActive(false);
+            yield break;
         }
         yield return new WaitForSeconds(0.4f);
 
-        ballNum = Random.Range(1, 5);
+        ballNum = Random.Range(1, 3);
         balls[ballObjectIndex].GetComponent<BallController>().SetBall(ballInfo[ballNum]);
 
         do
@@ -69,5 +71,5 @@ public class Ball
 {
     public int num;
     public float radius;
-    //public Sprite image;
+    public Sprite image;
 }

@@ -20,48 +20,48 @@ public class WarningZone : MonoBehaviour
     }
     #endregion
 
-    public bool isGameOver = false;
 
-    private int ballInZoneCount = 0;
+    [SerializeField] private int ballInZoneCount = 0;
     [SerializeField] private SpriteRenderer zoneSprite;
 
     private void Start()
     {
         ballInZoneCount = 0;
-        isGameOver = false;
         zoneSprite.color = new Color(1, 1, 1, 0);
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
         ballInZoneCount++;
-        Debug.Log("ballInZoneCount : "+ballInZoneCount);
-        GameOverLineOnOff();
     }
+
+    /*private void OnTriggerStay2D(Collider2D collision)
+    {
+        if (collision.gameObject.GetComponent<BallController>().isShooted)
+        {
+            GameOverLineSetActive(true);
+        }
+    }*/
 
     private void OnTriggerExit2D(Collider2D collision)
     {
         ballInZoneCount--;
-        Debug.Log("ballInZoneCount : " + ballInZoneCount);
+        if(ballInZoneCount == 0)
+        {
+            GameOverLineSetActive(false);
+        }
     }
 
 
-    public void GameOverLineOnOff()
+    public void GameOverLineSetActive(bool active)
     {
-        if (ballInZoneCount == 0) //Off
+        if (active) //On
         {
-            Debug.Log("GameOverLineOff");
-            zoneSprite.DOColor(new Color(1, 1, 1, 0), 0.3f);
-        }
-        else //On
-        {
-            Debug.Log("GameOverLineOn");
             zoneSprite.DOColor(new Color(1, 1, 1, 1), 0.3f);
         }
-    }
-    public void GameOver()
-    {
-        Debug.Log("Game Over");
-        isGameOver = true;
+        else //Off
+        {
+            zoneSprite.DOColor(new Color(1, 1, 1, 0), 0.3f);
+        }
     }
 }
