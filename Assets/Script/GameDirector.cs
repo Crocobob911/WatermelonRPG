@@ -21,25 +21,38 @@ public class GameDirector : MonoBehaviour
     public bool isGameOver;
 
     private int score;
-    [SerializeField] private Text scoreUI;
+    [SerializeField] private Text scoreText;
+
+    [SerializeField] private GameObject inGameUI;
+    [SerializeField] private GameObject mainSceneUI;
 
     private void Start()
     {
+        CameraController.instance.MoveCam(1);
+        inGameUI.SetActive(false);
+    }
+
+
+    public void GameStart()
+    {
+        Debug.Log("Game Start");
         isGameOver = false;
+
+        CameraController.instance.MoveCam(2);
+
+        mainSceneUI.SetActive(false);
+        inGameUI.SetActive(true);
+
         score = 0;
-        SetScoreUI();
+        scoreText.text = "" + score;
+
+        BallDirector.instance.ballDirectorGameStart();
     }
 
     public void GetScore(int point)
     {
         score += point;
-        SetScoreUI();
-    }
-
-    private void SetScoreUI()
-    {
-        scoreUI.text = "" + score;
-        //Debug.Log(score);
+        scoreText.text = "" + score;
     }
 
     public void GameOver()

@@ -7,11 +7,12 @@ public class BallController : MonoBehaviour
 {
     public int ballNum;
     public bool isOn=false;
-
     public bool isShooted = false;
+
     [SerializeField] private float speed;
     [SerializeField] private SpriteRenderer spriteRenderer;
     [SerializeField] private AudioSource ballSound;
+
     private BallController collisionBallController;
     private Rigidbody2D rigidBody;
     private bool isGettingBig = false;
@@ -24,10 +25,9 @@ public class BallController : MonoBehaviour
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.Alpha2))
-        { 
             ShootBall();
-        }
     }
+
     public void SetBall(Ball info) //공에 정보들을 집어넣음
     {
         ballNum = info.num;
@@ -75,11 +75,11 @@ public class BallController : MonoBehaviour
                     if (gameObject.transform.position.y >= collision.transform.position.y)
                     {
                         collisionBallController.isOn = false;
+                        isGettingBig = true;
 
-                        rigidBody.AddForce(3 * (collision.transform.position - gameObject.transform.position));
+                        rigidBody.velocity = new Vector2(0f, 0f);
+                        gameObject.transform.DOMove(collision.transform.position, 0.1f);
                         collision.gameObject.SetActive(false);
-                        //collision.transform.DOMove(collision.gameObject.transform.position, 0.4f);
-
                         GameDirector.instance.GetScore(ballNum);
                         ballNum++;
                         StartCoroutine("BallScaler");
@@ -88,23 +88,21 @@ public class BallController : MonoBehaviour
             }
         }
     }
+
     private void OnTriggerStay2D(Collider2D collision)
     {
         if (isShooted && collision.gameObject.layer == 10)
         {
             WarningZone.instance.GameOverLineSetActive(true);
         }
-
         if (isShooted && collision.gameObject.layer == 11)
         {
             GameDirector.instance.GameOver();
         }
-
     }
 
     private IEnumerator BallScaler()
     {
-        isGettingBig = true;
         yield return new WaitForSeconds(0.4f);
 
         gameObject.transform.DOScale(

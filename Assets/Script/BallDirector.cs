@@ -14,24 +14,28 @@ public class BallDirector : MonoBehaviour
             return;
         }
         instance = this;
+
+        GetBalls();
     }
     #endregion
 
     public List<Ball> ballInfo = new List<Ball>();
 
     private BallController[] balls = new BallController[100];
-
     [SerializeField] private int ballObjectIndex = 0;
     [SerializeField] private GameObject dragZone;
     private int ballNum;
+    private int nextBallNum;
+
+    [SerializeField] private SpriteRenderer nextBallSprite;
 
 
-    private void Start()
+    public void ballDirectorGameStart()
     {
-        GetBalls();
-        dragZone.SetActive(true);
+        CallNextBall();
         StartCoroutine(CallBall());
     }
+
 
     private void GetBalls()
     {
@@ -52,7 +56,8 @@ public class BallDirector : MonoBehaviour
         }
         yield return new WaitForSeconds(0.4f);
 
-        ballNum = Random.Range(1, 3);
+        ballNum = nextBallNum;
+        CallNextBall();
         balls[ballObjectIndex].GetComponent<BallController>().SetBall(ballInfo[ballNum]);
 
         do
@@ -60,9 +65,14 @@ public class BallDirector : MonoBehaviour
             ballObjectIndex++;
             if (ballObjectIndex > 99) ballObjectIndex = 0;
         } while (balls[ballObjectIndex].isOn);
-        //Debug.Log(ballObjectIndex);
 
         yield return null;
+    }
+
+    private void CallNextBall()
+    {
+        nextBallNum = Random.Range(0, 3);
+        nextBallSprite.sprite = ballInfo[nextBallNum].image;
     }
 }
 

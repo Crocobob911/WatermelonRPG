@@ -4,13 +4,40 @@ using UnityEngine;
 
 public class CameraController : MonoBehaviour
 {
+    #region Singleton
+    public static CameraController instance;
     [SerializeField] private int frameCount = 60;
-
     private void Awake()
     {
+        if (instance != null)
+        {
+            Destroy(gameObject);
+            return;
+        }
+        instance = this;
+
         setupCamera();
         setupFrame();
     }
+    #endregion
+
+
+    public void MoveCam(int num)
+    {
+        switch (num){
+            case 1:
+                gameObject.transform.position = new Vector3(-10, 0, -10);
+                break;
+
+            case 2:
+                gameObject.transform.position = new Vector3(0, 0, -10);
+                break;
+
+            default:
+                break;
+        }
+    }
+
 
     private void setupCamera()
     {
